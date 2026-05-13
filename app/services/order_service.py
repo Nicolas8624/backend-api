@@ -58,7 +58,7 @@ def get_all(page: int = 1, limit: int = 10, customerId: int = None,
     total_pages = max(1, -(-total_items // limit))
     start = (page - 1) * limit
 
-    enriched = [_enrich_order(o, include_items=False) for o in orders[start:start + limit]]
+    enriched = [_enrich_order(o, include_items=True) for o in orders[start:start + limit]]
 
     return {
         "data": enriched,

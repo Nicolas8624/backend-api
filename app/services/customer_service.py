@@ -50,3 +50,10 @@ def update(customer_id: int, data: dict):
     if not customer:
         raise NotFoundError(f"Customer with id {customer_id} not found")
     return customer_repository.update(customer_id, data)
+
+
+def delete(customer_id: int):
+    customer = customer_repository.get_by_id(customer_id)
+    if not customer:
+        raise NotFoundError(f"Customer with id {customer_id} not found")
+    return customer_repository.delete(customer_id)

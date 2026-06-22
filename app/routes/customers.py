@@ -56,3 +56,13 @@ async def create_customer(body: CustomerCreate):
 )
 async def update_customer(customerId: int, body: CustomerUpdate):
     return customer_service.update(customerId, body.model_dump(exclude_unset=True))
+
+
+@router.delete(
+    "/{customerId}",
+    summary="Eliminar un cliente",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_customer(customerId: int):
+    customer_service.delete(customerId)
+    return None

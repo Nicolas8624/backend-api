@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+EXTRA_CUSTOMERS_PATH = Path(__file__).parent.parent.parent / "customers_extra.json"
+
 # Almacén de datos en memoria
 db = {
     "suppliers": [],
@@ -111,6 +113,17 @@ def load_data():
         )
         db["counters"]["order_number"] = max_num
 
+    # --- Cargar clientes extra persistidos ---
+    if EXTRA_CUSTOMERS_PATH.exists():
+        with open(EXTRA_CUSTOMERS_PATH, "r", encoding="utf-8") as f:
+            extra = json.load(f)
+        existing_ids = {c["id"] for c in db["customers"]}
+        for c in extra:
+            if c["id"] not in existing_ids:
+                db["customers"].append(c)
+        if db["customers"]:
+            db["counters"]["customer_id"] = max(c["id"] for c in db["customers"])
+
 
 def next_id(entity: str) -> int:
     """Genera el siguiente ID auto-incremental para una entidad."""
@@ -122,3 +135,9 @@ def next_order_number() -> str:
     """Genera el siguiente número de orden (ORD-XXXX)."""
     db["counters"]["order_number"] += 1
     return f"ORD-{db['counters']['order_number']}"
+
+
+def save_customers() -> None:
+    """Persiste todos los clientes en customers_extra.json."""
+    with open(EXTRA_CUSTOMERS_PATH, "w", encoding="utf-8") as f:
+        json.dump(db["customers"], f, ensure_ascii=False, indent=2)
